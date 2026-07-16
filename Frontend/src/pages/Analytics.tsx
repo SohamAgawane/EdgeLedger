@@ -23,7 +23,10 @@ export default function Analytics() {
 
   const d = data
   const bestSector = d?.sectorPerformance?.[0]
-  const worstSector = d?.sectorPerformance?.at(-1)
+  const worstSector =
+  d?.sectorPerformance?.length
+    ? d.sectorPerformance[d.sectorPerformance.length - 1]
+    : undefined
   const bestDay = d?.weekdayPerformance?.reduce((a, b) => b.avgPnl > a.avgPnl ? b : a, d.weekdayPerformance[0])
   const worstDay = d?.weekdayPerformance?.reduce((a, b) => b.avgPnl < a.avgPnl ? b : a, d.weekdayPerformance[0])
   const topConviction = d?.convictionVsProfit?.reduce((a, b) => b.avgPnl > a.avgPnl ? b : a, d.convictionVsProfit[0])

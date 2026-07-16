@@ -7,28 +7,13 @@ import { X } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
 import { getTradeApi } from '../../api/trades'
 import { useCreateTrade, useUpdateTrade } from '../../hooks/useTrades'
-import { EMOTION_OPTIONS, MISTAKE_OPTIONS, SECTOR_OPTIONS } from '../../types'
+import { EMOTION_OPTIONS, MISTAKE_OPTIONS, SECTOR_OPTIONS, Trade } from '../../types'
 import Select from '../ui/Select'
 import { fCurrency } from '../../utils/formatters'
 
 // ---------------------------------------------------------------------------
 // Shape of a trade as returned by the API. Only the fields this form reads.
 // ---------------------------------------------------------------------------
-interface TradeRecord {
-  symbol: string
-  sector: string
-  buyPrice: number
-  sellPrice?: number
-  quantity: number
-  entryDate: string
-  exitDate?: string
-  isOpen: boolean
-  emotionBefore?: string
-  emotionAfter?: string
-  mistakeCategory?: string
-  convictionScore?: number
-  notes?: string
-}
 
 // ---------------------------------------------------------------------------
 // Validation
@@ -125,7 +110,7 @@ const DEFAULT_VALUES: Form = {
   notes: '',
 }
 
-const mapExistingToForm = (t: TradeRecord): Form => ({
+const mapExistingToForm = (t: Trade): Form => ({
   symbol: t.symbol ?? '',
   sector: t.sector ?? '',
   buyPrice: (t.buyPrice ?? '') as unknown as number,
@@ -164,7 +149,7 @@ export default function TradeDrawer({ open, onClose, editId }: TradeDrawerProps)
   const create = useCreateTrade()
   const update = useUpdateTrade()
 
-  const { data: existing } = useQuery<TradeRecord>({
+  const { data: existing } = useQuery<Trade>({
     queryKey: ['trade', editId],
     queryFn: async () => {
       const { data } = await getTradeApi(editId!)

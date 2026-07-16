@@ -17,6 +17,7 @@ export interface Trade {
   quantity: number
   entryDate: string
   exitDate?: string
+  isOpen: boolean
   sector: string
   emotionBefore?: string
   emotionAfter?: string
