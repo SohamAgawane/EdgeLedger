@@ -33,34 +33,6 @@ It answers questions no brokerage dashboard answers:
 
 **Frontend** — React, Tailwind CSS, Recharts, Framer Motion
 
----
-
-## Setup
-
-### Prerequisites
-- Node.js v18+
-- MongoDB (local or Atlas)
-
-### Backend
-
-```bash
-git clone https://github.com/yourusername/edgeledger.git
-cd edgeledger/backend
-npm install
-cp .env.sample .env   # fill in your values
-npm run dev
-```
-
-### Frontend
-
-```bash
-cd edgeledger/frontend
-npm install
-npm run dev
-```
-
----
-
 ## Author
 
 Built by [Soham Agawane](https://github.com/SohamAgawane)
