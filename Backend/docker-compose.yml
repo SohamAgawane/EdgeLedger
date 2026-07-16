@@ -1,0 +1,29 @@
+services:
+  backend:
+    build: .
+    container_name: edgeledger-backend
+    ports:
+      - "8001:8001"
+    environment:
+      PORT: 8001
+      MONGODB_URL: mongodb://mongo:27017
+      ACCESS_TOKEN_SECRET: local-dev-access-secret
+      ACCESS_TOKEN_EXPIRY: 1d
+      REFRESH_TOKEN_SECRET: local-dev-refresh-secret
+      REFRESH_TOKEN_EXPIRY: 14d
+      NODE_ENV: development
+    depends_on:
+      - mongo
+    volumes:
+      - ./public/temp:/app/public/temp
+
+  mongo:
+    image: mongo:7
+    container_name: edgeledger-mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+volumes:
+  mongo_data:
