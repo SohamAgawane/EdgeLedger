@@ -4,7 +4,7 @@ import { Upload, Filter, BookOpen } from 'lucide-react'
 import { useTrades, useImportCsv } from '../hooks/useTrades'
 import type { TradeFilters } from '../api/trades'
 import TradeTable from '../components/trade/TradeTable'
-import TradeFilters from '../components/trade/TradeFilters.tsx'
+import TradeFilter from '../components/trade/TradeFilters.tsx'
 import EmptyState from '../components/ui/EmptyState'
 import { TableSkeleton } from '../components/ui/Skeleton'
 
@@ -54,7 +54,7 @@ export default function Journal() {
 
       {/* Filters */}
       {showFilters && (
-        <TradeFilters
+        <TradeFilter
           filters={filters}
           onChange={(f) => setFilters((p) => ({ ...p, ...f, page: 1 }))}
           onClear={() => setFilters({ page: 1, limit: 20 })}
