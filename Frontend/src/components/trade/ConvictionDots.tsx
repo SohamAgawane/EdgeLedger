@@ -1,18 +1,11 @@
 export default function ConvictionDots({ score }: { score?: number }) {
-  if (!score) return <span style={{ color: 'var(--text3)' }} className="text-[11px]">—</span>
+  if (!score) return <span style={{ color: 'var(--text3)' }} className="text-[12px]">—</span>
   return (
-    <div className="flex gap-0.5 items-center">
-      {Array.from({ length: 10 }).map((_, i) => (
-        <div
-          key={i}
-          className="rounded-full"
-          style={{
-            width: 5, height: 5,
-            background: i < score ? 'var(--brand)' : 'var(--border2)',
-          }}
-        />
-      ))}
-      <span className="ml-1 text-[11px] mono" style={{ color: 'var(--text3)' }}>{score}</span>
+    <div className="flex items-center gap-2" title={`Conviction ${score}/10`}>
+      <div className="h-1.5 w-14 rounded-full overflow-hidden" style={{ background: 'var(--border)' }}>
+        <div className="h-full rounded-full" style={{ width: `${score * 10}%`, background: 'var(--brand)' }} />
+      </div>
+      <span className="text-[11.5px] mono" style={{ color: 'var(--text3)' }}>{score}</span>
     </div>
   )
 }

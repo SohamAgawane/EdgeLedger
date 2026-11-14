@@ -9,6 +9,9 @@ const getDashboard = asyncHandler(async (req: Request, res: Response) => {
     // aggregate pipelines need ObjectId not plain string
     const userId = new mongoose.Types.ObjectId(req.user!._id as any);
 
+    console.time('total-request');
+    console.time('aggregation');
+
     // STEP 2 - Run full analytics pipeline
     const result = await Trade.aggregate([
         {
@@ -304,6 +307,8 @@ const getDashboard = asyncHandler(async (req: Request, res: Response) => {
         }
     ]);
 
+    console.timeEnd('aggregation');
+
     // STEP 3 — $facet always returns an array with one element
     const analytics: any = result[0] || {};
 
@@ -349,6 +354,8 @@ const getDashboard = asyncHandler(async (req: Request, res: Response) => {
             isOverConcentrated
         };
     });
+
+    console.timeEnd('total-request');
 
     // STEP 6 — return the shaped response
     // [0] on single-value metrics because $group with _id:null

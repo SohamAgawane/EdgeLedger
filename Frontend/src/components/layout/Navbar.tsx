@@ -1,69 +1,38 @@
 import { useLocation } from 'react-router-dom'
-import { Bell } from 'lucide-react'
+import { Plus } from 'lucide-react'
 import ThemeToggle from '../ui/ThemeToggle'
-import { useAuthStore } from '../../store/authStore'
+import { LogoMark } from '../ui/Logo'
 
 const PAGE_TITLES: Record<string, string> = {
-  '/': 'Dashboard',
-  '/journal': 'Trade Journal',
+  '/dashboard': 'Dashboard',
+  '/journal': 'Trade journal',
   '/analytics': 'Analytics',
   '/watchlist': 'Watchlist',
-  '/rules': 'Trading Rules',
+  '/rules': 'Trading rules',
   '/settings': 'Settings',
 }
 
 export default function Navbar({ onLogTrade }: { onLogTrade: () => void }) {
   const { pathname } = useLocation()
-  const user = useAuthStore((s) => s.user)
-
-  const hour = new Date().getHours();
-
-  const greeting =
-    hour < 12
-      ? "Good Morning"
-      : hour < 17
-        ? "Good Afternoon"
-        : "Good Evening";
 
   return (
     <header
-      className="flex items-center justify-between px-6 h-[60px] shrink-0"
-      style={{ background: 'var(--card)', borderBottom: '1px solid var(--border)' }}
+      className="flex items-center justify-between gap-3 px-4 sm:px-8 h-[64px] shrink-0"
+      style={{ background: 'color-mix(in srgb, var(--bg) 82%, transparent)', backdropFilter: 'blur(12px)', borderBottom: '1px solid var(--border)' }}
     >
-      <div>
-        <h1
-          className="text-[16px] font-bold"
-          style={{ color: "var(--text)" }}
-        >
-          {greeting}, {user?.fullName?.split(" ")[0] ?? "Trader"} 👋
+      <div className="flex items-center gap-3 min-w-0">
+        <span className="md:hidden"><LogoMark size={28} /></span>
+        <h1 className="text-[20px] font-bold truncate" style={{ color: 'var(--text)' }}>
+          {PAGE_TITLES[pathname] ?? 'EdgeLedger'}
         </h1>
-
-        <p
-          className="text-[11.5px]"
-          style={{ color: "var(--text3)" }}
-        >
-          {new Date().toLocaleDateString("en-IN", {
-            weekday: "long",
-            day: "numeric",
-            month: "long",
-            year: "numeric",
-          })}
-        </p>
       </div>
-
       <div className="flex items-center gap-2">
         <ThemeToggle />
-        <button
-          className="w-8 h-8 rounded-lg flex items-center justify-center transition-colors hover:opacity-70"
-          style={{ background: 'var(--bg2)', color: 'var(--text2)' }}
-        >
-          <Bell size={15} />
-        </button>
-        <button
-          onClick={onLogTrade}
-          className="btn-primary text-[13px] py-2 px-4"
-        >
-          + Log Trade
+        <button onClick={onLogTrade} className="btn-primary text-[13.5px] !py-2 !px-3.5">
+          <Plus size={15} strokeWidth={2.5} />
+          <span>Log trade</span>
+          <kbd className="hidden sm:inline-block ml-1 px-1.5 py-px rounded text-[11px] font-medium mono"
+            style={{ background: 'rgba(255,255,255,.2)' }}>N</kbd>
         </button>
       </div>
     </header>

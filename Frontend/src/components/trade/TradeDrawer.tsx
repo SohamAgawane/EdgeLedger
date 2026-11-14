@@ -9,7 +9,7 @@ import { getTradeApi } from '../../api/trades'
 import { useCreateTrade, useUpdateTrade } from '../../hooks/useTrades'
 import { EMOTION_OPTIONS, MISTAKE_OPTIONS, SECTOR_OPTIONS, Trade } from '../../types'
 import Select from '../ui/Select'
-import { fCurrency } from '../../utils/formatters'
+import { fCurrency, labelMap } from '../../utils/formatters'
 
 // ---------------------------------------------------------------------------
 // Shape of a trade as returned by the API. Only the fields this form reads.
@@ -241,7 +241,7 @@ export default function TradeDrawer({ open, onClose, editId }: TradeDrawerProps)
 
   const sectorOpts = SECTOR_OPTIONS.map((s) => ({ value: s, label: s }))
   const emotionOpts = EMOTION_OPTIONS.map((e) => ({ value: e, label: e.charAt(0).toUpperCase() + e.slice(1) }))
-  const mistakeOpts = MISTAKE_OPTIONS.map((m) => ({ value: m, label: m }))
+  const mistakeOpts = MISTAKE_OPTIONS.map((m) => ({ value: m, label: labelMap[m] ?? m }))
 
   const isPending = create.isPending || update.isPending
 
@@ -254,7 +254,7 @@ export default function TradeDrawer({ open, onClose, editId }: TradeDrawerProps)
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-40"
-            style={{ background: 'rgba(0,0,0,0.35)', backdropFilter: 'blur(2px)' }}
+            style={{ background: 'rgba(6,9,22,0.55)', backdropFilter: 'blur(6px)' }}
             onClick={onClose}
           />
           <motion.div
@@ -264,10 +264,10 @@ export default function TradeDrawer({ open, onClose, editId }: TradeDrawerProps)
             transition={{ type: 'spring', stiffness: 300, damping: 30 }}
             className="fixed right-0 top-0 h-full z-50 overflow-y-auto"
             style={{
-              width: 480,
+              width: 'min(520px, 100vw)',
               background: 'var(--card)',
               borderLeft: '1px solid var(--border)',
-              boxShadow: '-12px 0 40px rgba(0,0,0,0.1)',
+              boxShadow: '-24px 0 60px -20px rgba(0,0,0,0.35)',
             }}
           >
             {/* Header */}
@@ -275,27 +275,28 @@ export default function TradeDrawer({ open, onClose, editId }: TradeDrawerProps)
               className="flex items-center justify-between px-5 py-4 sticky top-0 z-10"
               style={{ background: 'var(--card)', borderBottom: '1px solid var(--border)' }}
             >
-              <h2 className="text-[14px] font-bold" style={{ color: 'var(--text)' }}>
-                {isEdit ? 'Edit Trade' : 'Log a Trade'}
+              <h2 className="text-[18px] font-bold" style={{ color: 'var(--text)' }}>
+                {isEdit ? 'Edit trade' : 'Log a trade'}
               </h2>
               <button
                 onClick={onClose}
-                className="w-7 h-7 rounded-lg flex items-center justify-center hover:opacity-70"
-                style={{ background: 'var(--bg2)', color: 'var(--text2)' }}
+                aria-label="Close"
+                className="w-8 h-8 rounded-lg flex items-center justify-center transition-colors hover:bg-[var(--bg2)]"
+                style={{ color: 'var(--text2)' }}
               >
-                <X size={14} />
+                <X size={16} />
               </button>
             </div>
 
             <form onSubmit={handleSubmit(onSubmit)} className="p-5 space-y-5">
               {/* Trade Details */}
               <div>
-                <p className="text-[11px] font-semibold uppercase tracking-widest mb-3" style={{ color: 'var(--text3)' }}>
-                  Trade Details
+                <p className="section-title mb-3">
+                  Trade details
                 </p>
                 <div className="space-y-3">
                   <Field label="Symbol" error={errors.symbol?.message}>
-                    <input className="input-base uppercase" placeholder="e.g. RELIANCE" {...register('symbol')} />
+                    <input className="input-base uppercase" placeholder="RELIANCE" {...register('symbol')} />
                   </Field>
 
                   <Field label="Sector" error={errors.sector?.message}>
@@ -316,10 +317,10 @@ export default function TradeDrawer({ open, onClose, editId }: TradeDrawerProps)
                   </Field>
 
                   <div className="grid grid-cols-3 gap-2">
-                    <Field label="Buy Price" error={errors.buyPrice?.message}>
+                    <Field label="Buy price" error={errors.buyPrice?.message}>
                       <input type="number" step="0.01" className="input-base" placeholder="0.00" {...register('buyPrice')} />
                     </Field>
-                    <Field label="Sell Price" error={errors.sellPrice?.message}>
+                    <Field label="Sell price" error={errors.sellPrice?.message}>
                       <input
                         type="number"
                         step="0.01"
@@ -334,17 +335,17 @@ export default function TradeDrawer({ open, onClose, editId }: TradeDrawerProps)
                     </Field>
                     <Field label="">
                       <label className="flex items-center gap-2 cursor-pointer whitespace-nowrap">
-                        <input type="checkbox" {...register('isOpen')} />
-                        <span className="text-[13px]">Trade is still open</span>
+                        <input type="checkbox" className="w-4 h-4 accent-[var(--brand)]" {...register('isOpen')} />
+                        <span className="text-[13.5px]" style={{ color: 'var(--text)' }}>Trade is still open</span>
                       </label>
                     </Field>
                   </div>
 
                   <div className="grid grid-cols-2 gap-2">
-                    <Field label="Entry Date" error={errors.entryDate?.message}>
+                    <Field label="Entry date" error={errors.entryDate?.message}>
                       <input type="date" className="input-base" {...register('entryDate')} />
                     </Field>
-                    <Field label="Exit Date" error={errors.exitDate?.message}>
+                    <Field label="Exit date" error={errors.exitDate?.message}>
                       <input
                         type="date"
                         className="input-base disabled:opacity-50 disabled:cursor-not-allowed"
@@ -356,9 +357,9 @@ export default function TradeDrawer({ open, onClose, editId }: TradeDrawerProps)
 
                   {/* Live P&L */}
                   <div
-                    className="rounded-lg p-3 flex items-center justify-between"
+                    className="rounded-xl p-3.5 flex items-center justify-between"
                     style={{
-                      background: isOpen ? 'var(--bg2)' : livePnl !== null && livePnl >= 0 ? 'var(--profit-bg)' : 'var(--loss-bg)',
+                      background: isOpen || livePnl === null ? 'var(--bg2)' : livePnl >= 0 ? 'var(--profit-bg)' : 'var(--loss-bg)',
                       opacity: isOpen ? 0.6 : 1,
                     }}
                   >
@@ -368,7 +369,7 @@ export default function TradeDrawer({ open, onClose, editId }: TradeDrawerProps)
                     <span
                       className="mono font-bold text-[15px]"
                       style={{
-                        color: isOpen ? 'var(--text3)' : livePnl !== null && livePnl >= 0 ? 'var(--profit)' : 'var(--loss)',
+                        color: isOpen || livePnl === null ? 'var(--text3)' : livePnl >= 0 ? 'var(--profit)' : 'var(--loss)',
                       }}
                     >
                       {isOpen ? 'Waiting for exit' : livePnl !== null ? `${livePnl >= 0 ? '+' : ''}${fCurrency(livePnl)}` : '—'}
@@ -379,19 +380,19 @@ export default function TradeDrawer({ open, onClose, editId }: TradeDrawerProps)
 
               {/* Psychology */}
               <div>
-                <p className="text-[11px] font-semibold uppercase tracking-widest mb-3" style={{ color: 'var(--text3)' }}>
+                <p className="section-title mb-3">
                   Psychology
                 </p>
                 <div className="space-y-3">
                   <div className="grid grid-cols-2 gap-2">
-                    <Field label="Emotion Before">
+                    <Field label="Emotion before">
                       <Controller
                         name="emotionBefore"
                         control={control}
                         render={({ field }) => (
                           <Select
                             options={emotionOpts}
-                            placeholder="Select emotion"
+                            placeholder="How did you feel?"
                             value={field.value}
                             onChange={field.onChange}
                             onBlur={field.onBlur}
@@ -400,14 +401,14 @@ export default function TradeDrawer({ open, onClose, editId }: TradeDrawerProps)
                         )}
                       />
                     </Field>
-                    <Field label="Emotion After">
+                    <Field label="Emotion after">
                       <Controller
                         name="emotionAfter"
                         control={control}
                         render={({ field }) => (
                           <Select
                             options={emotionOpts}
-                            placeholder="Select emotion"
+                            placeholder="How did you feel?"
                             value={field.value}
                             onChange={field.onChange}
                             onBlur={field.onBlur}
@@ -418,14 +419,14 @@ export default function TradeDrawer({ open, onClose, editId }: TradeDrawerProps)
                     </Field>
                   </div>
 
-                  <Field label="Mistake Category">
+                  <Field label="Mistake category">
                     <Controller
                       name="mistakeCategory"
                       control={control}
                       render={({ field }) => (
                         <Select
                           options={mistakeOpts}
-                          placeholder="Select mistake"
+                          placeholder="Any mistake?"
                           value={field.value}
                           onChange={field.onChange}
                           onBlur={field.onBlur}
@@ -435,13 +436,13 @@ export default function TradeDrawer({ open, onClose, editId }: TradeDrawerProps)
                     />
                   </Field>
 
-                  <Field label="Conviction Score (1–10)" error={errors.convictionScore?.message}>
+                  <Field label="Conviction score (1–10)" error={errors.convictionScore?.message}>
                     <input
                       type="number"
                       min="1"
                       max="10"
                       className="input-base"
-                      placeholder="Your confidence level 1-10"
+                      placeholder="How sure were you, 1 to 10?"
                       {...register('convictionScore')}
                     />
                   </Field>
@@ -450,7 +451,7 @@ export default function TradeDrawer({ open, onClose, editId }: TradeDrawerProps)
 
               {/* Notes */}
               <div>
-                <p className="text-[11px] font-semibold uppercase tracking-widest mb-3" style={{ color: 'var(--text3)' }}>
+                <p className="section-title mb-3">
                   Notes
                 </p>
                 <Field label="">

@@ -6,23 +6,20 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans:    ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
-        display: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
-        mono:    ['"JetBrains Mono"', 'monospace'],
-      },
-      animation: {
-        'fade-up':  'fadeUp 0.3s ease-out',
-        'shimmer':  'shimmer 2s infinite linear',
+        sans:    ['Geist', 'system-ui', 'sans-serif'],
+        display: ['"Bricolage Grotesque"', 'Geist', 'system-ui', 'sans-serif'],
+        mono:    ['"Geist Mono"', 'ui-monospace', 'monospace'],
       },
       keyframes: {
-        fadeUp: {
-          '0%':   { opacity: '0', transform: 'translateY(10px)' },
-          '100%': { opacity: '1', transform: 'translateY(0)' },
-        },
         shimmer: {
           '0%':   { backgroundPosition: '-200% 0' },
           '100%': { backgroundPosition: '200% 0' },
         },
+        draw: { to: { strokeDashoffset: '0' } },
+      },
+      animation: {
+        shimmer: 'shimmer 2s infinite linear',
+        draw:    'draw 1.6s cubic-bezier(.3,.7,.2,1) .2s forwards',
       },
     },
   },

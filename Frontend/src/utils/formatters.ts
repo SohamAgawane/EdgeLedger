@@ -25,16 +25,24 @@ export const holdingDays = (entry: string, exit?: string) => {
 export const pnlColor = (n: number) => n >= 0 ? 'var(--profit)' : 'var(--loss)'
 
 export const labelMap: Record<string, string> = {
-  overtrading: 'Overtrading', revenge_trade: 'Revenge Trade', no_stop_loss: 'No Stoploss',
-  fomo_entry: 'FOMO Entry', ignored_plan: 'Ignored Plan', oversized_position: 'Oversized Pos.',
-  early_exit: 'Early Exit', late_exit: 'Late Exit', chasing_news: 'Chasing News', none: 'None',
+  overtrading: 'Overtrading', revenge_trade: 'Revenge trade', no_stop_loss: 'No stop-loss',
+  fomo_entry: 'FOMO entry', ignored_plan: 'Ignored plan', oversized_position: 'Oversized position',
+  early_exit: 'Early exit', late_exit: 'Late exit', chasing_news: 'Chasing news', none: 'None',
   confident: 'Confident', fearful: 'Fearful', greedy: 'Greedy', fomo: 'FOMO',
   calm: 'Calm', anxious: 'Anxious', neutral: 'Neutral', revenge: 'Revenge',
 }
 
-export const emotionColor: Record<string, { bg: string; text: string }> = {
-  confident: { bg: '#EEF7EE', text: '#3D7A3D' }, fearful: { bg: '#F0EEFB', text: '#5E4FA0' },
-  greedy:    { bg: '#FEF5E8', text: '#9A6200' }, fomo:    { bg: '#FEF0E8', text: '#A05020' },
-  calm:      { bg: '#EEF5FB', text: '#2E6A9A' }, anxious: { bg: '#FBF0EE', text: '#A03020' },
-  neutral:   { bg: '#F3F2EF', text: '#78716C' }, revenge: { bg: '#FEEEEE', text: '#A03030' },
+// One hue per emotion. Backgrounds are derived with color-mix so they work in light and dark themes.
+export const emotionColor: Record<string, string> = {
+  confident: '#12A67A', calm: '#2E8FD0', neutral: '#8A90A6', fearful: '#6C7BE8',
+  anxious: '#B65FCF', greedy: '#D9A21B', fomo: '#E8590C', revenge: '#DC3F5B',
+}
+
+export const fCompact = (n: number) => {
+  const abs = Math.abs(n)
+  const sign = n < 0 ? '-' : ''
+  if (abs >= 10000000) return `${sign}₹${(abs / 10000000).toFixed(1)}Cr`
+  if (abs >= 100000)   return `${sign}₹${(abs / 100000).toFixed(1)}L`
+  if (abs >= 1000)     return `${sign}₹${(abs / 1000).toFixed(abs >= 10000 ? 0 : 1)}k`
+  return `${sign}₹${abs.toFixed(0)}`
 }

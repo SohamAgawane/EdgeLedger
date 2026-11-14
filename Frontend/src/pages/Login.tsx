@@ -1,78 +1,66 @@
-import { useNavigate, Link } from 'react-router-dom'
+import { useState } from 'react'
+import { useNavigate, Link, Navigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { TrendingUp } from 'lucide-react'
+import { Eye, EyeOff } from 'lucide-react'
 import { loginApi } from '../api/auth'
 import { useAuthStore } from '../store/authStore'
-import { useThemeStore } from '../store/themeStore'
-import ThemeToggle from '../components/ui/ThemeToggle'
+import AuthShell from '../components/layout/AuthShell'
 import toast from 'react-hot-toast'
 
 const schema = z.object({
-  email:    z.string().min(1, 'Required'),
-  password: z.string().min(1, 'Required'),
+  email:    z.string().min(1, 'Enter your email or username'),
+  password: z.string().min(1, 'Enter your password'),
 })
 type Form = z.infer<typeof schema>
 
 export default function Login() {
-  const navigate  = useNavigate()
-  const { setAuth } = useAuthStore()
+  const navigate = useNavigate()
+  const { setAuth, isLoggedIn } = useAuthStore()
+  const [show, setShow] = useState(false)
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<Form>({ resolver: zodResolver(schema) })
+
+  if (isLoggedIn) return <Navigate to="/dashboard" replace />
 
   const onSubmit = async (d: Form) => {
     try {
       const { data } = await loginApi({ email: d.email, password: d.password })
       setAuth(data.data.user, data.data.accessToken, data.data.refreshToken)
-      toast.success(`Welcome back, ${data.data.user.fullName}`)
-      navigate('/')
+      toast.success(`Welcome back, ${data.data.user.fullName.split(' ')[0]}`)
+      navigate('/dashboard')
     } catch (e: any) {
-      toast.error(e.response?.data?.message || 'Login failed')
+      toast.error(e.response?.data?.message || 'Login failed. Check your details and try again.')
     }
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4" style={{ background: 'var(--bg)' }}>
-      <div className="absolute top-4 right-4"><ThemeToggle /></div>
-
-      <div className="w-full max-w-[380px]">
-        {/* Logo */}
-        <div className="flex flex-col items-center mb-8">
-          <div className="w-12 h-12 rounded-2xl flex items-center justify-center mb-3" style={{ background: 'var(--brand-bg)' }}>
-            <TrendingUp size={22} style={{ color: 'var(--brand)' }} />
-          </div>
-          <h1 className="text-[22px] font-bold" style={{ color: 'var(--text)' }}>EdgeLedger</h1>
-          <p className="text-[13px] mt-1" style={{ color: 'var(--text3)' }}>Trade smarter. Not harder.</p>
+    <AuthShell
+      title="Welcome back"
+      subtitle="Log in to review your trades and patterns."
+      footer={<>New to EdgeLedger? <Link to="/register" className="font-semibold hover:underline" style={{ color: 'var(--brand)' }}>Create a free account</Link></>}
+    >
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
+        <div>
+          <label htmlFor="email" className="label">Email or username</label>
+          <input id="email" autoComplete="username" className="input-base" placeholder="you@example.com" {...register('email')} />
+          {errors.email && <p className="text-[12px] mt-1.5" style={{ color: 'var(--loss)' }}>{errors.email.message}</p>}
         </div>
-
-        <div className="card p-6">
-          <h2 className="text-[15px] font-bold mb-1" style={{ color: 'var(--text)' }}>Welcome back</h2>
-          <p className="text-[13px] mb-5" style={{ color: 'var(--text3)' }}>Sign in to your account</p>
-
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            <div>
-              <label className="label">Email or Username</label>
-              <input className="input-base" placeholder="you@example.com" {...register('email')} />
-              {errors.email && <p className="text-[11px] mt-1" style={{ color: 'var(--loss)' }}>{errors.email.message}</p>}
-            </div>
-            <div>
-              <label className="label">Password</label>
-              <input type="password" className="input-base" placeholder="••••••••" {...register('password')} />
-              {errors.password && <p className="text-[11px] mt-1" style={{ color: 'var(--loss)' }}>{errors.password.message}</p>}
-            </div>
-            <button type="submit" disabled={isSubmitting} className="btn-primary w-full mt-2">
-              {isSubmitting ? 'Signing in…' : 'Sign in'}
+        <div>
+          <label htmlFor="password" className="label">Password</label>
+          <div className="relative">
+            <input id="password" type={show ? 'text' : 'password'} autoComplete="current-password" className="input-base !pr-11" placeholder="Your password" {...register('password')} />
+            <button type="button" onClick={() => setShow(!show)} aria-label={show ? 'Hide password' : 'Show password'}
+              className="absolute right-1.5 top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg flex items-center justify-center hover:bg-[var(--bg2)]" style={{ color: 'var(--text3)' }}>
+              {show ? <EyeOff size={16} /> : <Eye size={16} />}
             </button>
-          </form>
+          </div>
+          {errors.password && <p className="text-[12px] mt-1.5" style={{ color: 'var(--loss)' }}>{errors.password.message}</p>}
         </div>
-
-        <p className="text-center text-[13px] mt-4" style={{ color: 'var(--text3)' }}>
-          No account?{' '}
-          <Link to="/register" style={{ color: 'var(--brand)' }} className="font-semibold hover:opacity-70">
-            Create one
-          </Link>
-        </p>
-      </div>
-    </div>
+        <button type="submit" disabled={isSubmitting} className="btn-primary w-full !py-3 !text-[15px]">
+          {isSubmitting ? 'Logging in…' : 'Log in'}
+        </button>
+      </form>
+    </AuthShell>
   )
 }

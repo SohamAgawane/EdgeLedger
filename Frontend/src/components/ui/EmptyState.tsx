@@ -1,43 +1,18 @@
-import { LucideIcon } from "lucide-react";
-import { ReactNode } from "react";
+import { LucideIcon } from 'lucide-react'
+import { ReactNode } from 'react'
 
-interface Props {
-  icon: LucideIcon;
-  title: string;
-  description: string;
-  action?: ReactNode;
-}
+interface Props { icon: LucideIcon; title: string; description: string; action?: ReactNode }
 
-export default function EmptyState({
-  icon: Icon,
-  title,
-  description,
-  action,
-}: Props) {
+export default function EmptyState({ icon: Icon, title, description, action }: Props) {
   return (
-    <div className="flex flex-col items-center justify-center py-16 px-6 text-center">
-      <div
-        className="w-14 h-14 rounded-2xl flex items-center justify-center mb-4"
-        style={{ background: "var(--brand-bg)" }}
-      >
-        <Icon size={24} style={{ color: "var(--brand)" }} />
+    <div className="panel flex flex-col items-center justify-center py-16 px-6 text-center"
+      style={{ borderStyle: 'dashed', borderColor: 'var(--border2)', background: 'transparent' }}>
+      <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4" style={{ background: 'var(--brand-bg)' }}>
+        <Icon size={22} style={{ color: 'var(--brand)' }} />
       </div>
-
-      <h3
-        className="text-[15px] font-semibold mb-1"
-        style={{ color: "var(--text)" }}
-      >
-        {title}
-      </h3>
-
-      <p
-        className="text-[13px] mb-5 max-w-xs"
-        style={{ color: "var(--text3)" }}
-      >
-        {description}
-      </p>
-
+      <h3 className="text-[17px] font-bold mb-1.5" style={{ color: 'var(--text)' }}>{title}</h3>
+      <p className="text-[13.5px] mb-5 max-w-sm leading-relaxed" style={{ color: 'var(--text2)' }}>{description}</p>
       {action}
     </div>
-  );
+  )
 }

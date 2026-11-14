@@ -1,6 +1,7 @@
 import Select from '../ui/Select'
 import { SECTOR_OPTIONS, MISTAKE_OPTIONS } from '../../types'
 import type { TradeFilters as F } from '../../api/trades'
+import { labelMap } from '../../utils/formatters'
 
 interface Props {
   filters: F
@@ -10,10 +11,10 @@ interface Props {
 
 export default function TradeFilters({ filters, onChange, onClear }: Props) {
   const sectorOpts = SECTOR_OPTIONS.map((s) => ({ value: s, label: s }))
-  const mistakeOpts = MISTAKE_OPTIONS.map((m) => ({ value: m, label: m }))
+  const mistakeOpts = MISTAKE_OPTIONS.map((m) => ({ value: m, label: labelMap[m] ?? m }))
 
   return (
-    <div className="card p-4 mb-4">
+    <div className="card p-4">
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
         <Select
           options={sectorOpts} placeholder="All Sectors" value={filters.sector ?? ''}
@@ -40,7 +41,7 @@ export default function TradeFilters({ filters, onChange, onClear }: Props) {
             type="number" className="input-base" placeholder="Max P&L"
             value={filters.maxPnl ?? ''} onChange={(e) => onChange({ maxPnl: e.target.value || undefined })}
           />
-          <button className="btn-ghost text-[12px] px-3 shrink-0" onClick={onClear}>Clear</button>
+          <button className="btn-ghost text-[13px] px-3 shrink-0" onClick={onClear}>Clear</button>
         </div>
       </div>
     </div>
