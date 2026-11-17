@@ -24,6 +24,14 @@ app.use(express.urlencoded({ extended: true, limit: "16kb" }));
 app.use(express.static("public"));
 app.use(cookieParser());
 
+app.get("/api/v1", (_req, res) => {
+  res.status(200).json({
+    success: true,
+    message: "EdgeLedger API is running",
+    version: "1.0.0",
+  });
+});
+
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/trades", tradeRouter);
 app.use("/api/v1/watchlist", watchlistRouter);
