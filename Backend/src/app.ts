@@ -21,51 +21,12 @@ const allowedOrigins = (
 
 const corsOptions: cors.CorsOptions = {
   origin: (origin, callback) => {
-    if (!origin) {
+    if (!origin || allowedOrigins.includes(origin.replace(/\/+$/, ""))) {
       return callback(null, true);
     }
 
-    const isAllowed = allowedOrigins.includes(origin.replace(/\/+$/, ""));
-
-    console.log("Incoming origin:", origin);
-    console.log("Allowed origins:", allowedOrigins);
-    console.log("Origin allowed:", isAllowed);
-
-    if (isAllowed) {
-      return callback(null, true);
-    }
-
-    return callback(null, false);
-  },
-  credentials: true,
-  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-};
-
-app.use(cors(corsOptions));const allowedOrigins = (
-  process.env.CORS_ORIGIN ||
-  "https://edge-ledger-three.vercel.app,http://localhost:5173"
-)
-  .split(",")
-  .map((origin) => origin.trim().replace(/\/+$/, ""));
-
-const corsOptions: cors.CorsOptions = {
-  origin: (origin, callback) => {
-    if (!origin) {
-      return callback(null, true);
-    }
-
-    const isAllowed = allowedOrigins.includes(origin.replace(/\/+$/, ""));
-
-    console.log("Incoming origin:", origin);
-    console.log("Allowed origins:", allowedOrigins);
-    console.log("Origin allowed:", isAllowed);
-
-    if (isAllowed) {
-      return callback(null, true);
-    }
-
-    return callback(null, false);
+    console.error("CORS blocked origin:", origin);
+    return callback(new Error("Origin not allowed by CORS"));
   },
   credentials: true,
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
