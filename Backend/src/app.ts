@@ -12,15 +12,61 @@ import analyticsRouter from "./routes/analytics.routes";
 
 const app = express();
 
-const allowedOrigins = process.env.CORS_ORIGIN
-  ? process.env.CORS_ORIGIN.split(",").map((origin) => origin.trim())
-  : [
-      "https://edge-ledger-three.vercel.app",
-      "http://localhost:5173",
-    ];
+const allowedOrigins = (
+  process.env.CORS_ORIGIN ||
+  "https://edge-ledger-three.vercel.app,http://localhost:5173"
+)
+  .split(",")
+  .map((origin) => origin.trim().replace(/\/+$/, ""));
 
 const corsOptions: cors.CorsOptions = {
-  origin: allowedOrigins,
+  origin: (origin, callback) => {
+    if (!origin) {
+      return callback(null, true);
+    }
+
+    const isAllowed = allowedOrigins.includes(origin.replace(/\/+$/, ""));
+
+    console.log("Incoming origin:", origin);
+    console.log("Allowed origins:", allowedOrigins);
+    console.log("Origin allowed:", isAllowed);
+
+    if (isAllowed) {
+      return callback(null, true);
+    }
+
+    return callback(null, false);
+  },
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+};
+
+app.use(cors(corsOptions));const allowedOrigins = (
+  process.env.CORS_ORIGIN ||
+  "https://edge-ledger-three.vercel.app,http://localhost:5173"
+)
+  .split(",")
+  .map((origin) => origin.trim().replace(/\/+$/, ""));
+
+const corsOptions: cors.CorsOptions = {
+  origin: (origin, callback) => {
+    if (!origin) {
+      return callback(null, true);
+    }
+
+    const isAllowed = allowedOrigins.includes(origin.replace(/\/+$/, ""));
+
+    console.log("Incoming origin:", origin);
+    console.log("Allowed origins:", allowedOrigins);
+    console.log("Origin allowed:", isAllowed);
+
+    if (isAllowed) {
+      return callback(null, true);
+    }
+
+    return callback(null, false);
+  },
   credentials: true,
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
