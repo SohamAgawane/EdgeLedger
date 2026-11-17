@@ -1,3 +1,4 @@
+
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
@@ -12,13 +13,22 @@ import analyticsRouter from "./routes/analytics.routes";
 const app = express();
 
 const allowedOrigins = process.env.CORS_ORIGIN
-    ? process.env.CORS_ORIGIN.split(",").map((origin) => origin.trim())
-    : ['https://edge-ledger-three.vercel.app', 'https://edge-ledger-three.vercel.app'];
+  ? process.env.CORS_ORIGIN.split(",").map((origin) => origin.trim())
+  : [
+      "https://edge-ledger-three.vercel.app",
+      "http://localhost:5173",
+    ];
 
-app.use(cors({
-    origin: allowedOrigins,
-    credentials: true
-}));
+const corsOptions: cors.CorsOptions = {
+  origin: allowedOrigins,
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+};
+
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
+
 app.use(express.json({ limit: "16kb" }));
 app.use(express.urlencoded({ extended: true, limit: "16kb" }));
 app.use(express.static("public"));
